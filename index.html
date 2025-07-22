@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Exhibidores</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(to right, #f0f2f5, #d9e4f5);
+            font-family: 'Inter', sans-serif;
+            color: #333;
+            transition: background 0.4s ease;
+        }
+        
+        h1,
+        h2 {
+            font-weight: 700;
+            color: #222;
+            transition: color 0.3s ease;
+        }
+        
+        .btn {
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-weight: 600;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+        }
+        
+        .btn img {
+            margin-bottom: 6px;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn:hover img {
+            transform: scale(1.1);
+        }
+        
+        #startView {
+            padding-top: 80px;
+            padding-bottom: 60px;
+            transition: opacity 0.4s ease-in-out;
+        }
+        
+        #startView h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        #startView p {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 30px;
+        }
+        
+        .start-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 20px;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .start-buttons button {
+            width: 180px;
+            height: 180px;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+            transition: all 0.3s ease;
+            background-color: white;
+            border: 2px solid transparent;
+        }
+        
+        .start-buttons button:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.2);
+            border-color: #007bff;
+        }
+        
+        .start-buttons img {
+            height: 90px;
+            margin-bottom: 14px;
+        }
+        
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin: 20px auto;
+            justify-content: center;
+            background-color: #ffffffcc;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .btn-toggle.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        
+        .item {
+            background: white;
+            border-radius: 10px;
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 950px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            transition: all 0.4s ease-in-out;
+        }
+        
+        .item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.15);
+        }
+        
+        .item img {
+            width: 180px;
+            height: auto;
+            border-radius: 6px;
+            object-fit: contain;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .item img:hover {
+            transform: scale(1.05);
+        }
+        
+        .info {
+            flex: 1 1 200px;
+            min-width: 0;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+        
+        .info h5 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        .modal img {
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 8px;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 36px;
+            color: white;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        #catalogoView {
+            display: none;
+        }
+        
+        #itemCount {
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .text-center strong {
+            background-color: #ffffffaa;
+            padding: 6px 14px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div id="startView" class="container text-center my-5">
+        <h1 class="mb-4">Bienvenido al Catálogo de Junio</h1>
+        <div class="d-flex justify-content-center flex-wrap gap-3">
+            <button class="btn btn-outline-primary m-2" onclick="filtrarPorCadena('oxxo')">
+                <img src="logos/Oxxo_Logo.svg.png" alt="OXXO" style="height: 80px">
+                <div>OXXO</div>
+            </button>
+            <button class="btn btn-outline-success m-2" onclick="filtrarPorCadena('711')">
+                <img src="logos/Sseven_Logo.png" alt="7-Eleven" style="height: 80px">
+                <div>7-Eleven</div>
+            </button>
+            <button class="btn btn-outline-warning m-2" onclick="filtrarPorCadena('cck')">
+                <img src="logos/CCK_logo.png" alt="CCK" style="height: 80px">
+                <div>CCK</div>
+            </button>
+            <button class="btn btn-outline-info m-2" onclick="filtrarPorCadena('gomart')">
+                <img src="logos/GOMART_logo.png" alt="GO MART" style="height: 80px">
+                <div>GO MART</div>
+            </button>
+        </div>
+    </div>
+
+    <div id="catalogoView" class="container py-3" style="display: none;">
+        <h2 class="text-center mb-3">Catálogo de Exhibidores</h2>
+        <div class="filters">
+            <button class="btn btn-secondary" onclick="volverMenu()">Volver al menú principal</button>
+            <label class="ml-3">Familia:</label>
+            <div id="filtrosFamilia" class="filter-group"></div>
+            <label class="ml-3">Tipo:</label>
+            <div id="filtrosTipo" class="filter-group"></div>
+            <label class="ml-3">Charolas:</label>
+            <div id="filtrosCharolas" class="filter-group"></div>
+            <button class="btn btn-danger ml-3" onclick="limpiarFiltros()">Limpiar filtros</button>
+        </div>
+        <div class="text-center mb-2">
+            <strong>Items visibles: <span id="itemCount">0</span></strong>
+        </div>
+        <div id="catalogo"></div>
+    </div>
+
+    <div class="modal" id="imageModal">
+        <button class="modal-close" onclick="cerrarModal()">&times;</button>
+        <img id="modalImage" src="" alt="Imagen ampliada">
+    </div>
+
+    <!-- Archivos de datos -->
+    <script src="items_backwall.js"></script>
+    <script src="items_charolas_corregido.js"></script>
+    <script src="items_cck.js"></script>
+    <script src="items_seven.js"></script>
+    <script src="items_gomart.js"></script>
+
+    <script>
+        const allItems = [
+            ...(window.itemsBackwall || []),
+            ...(window.itemsCharolas || []),
+            ...(window.itemsCCK || []),
+            ...(window.itemsSeven || []),
+            ...(window.itemsGomart || [])
+        ];
+        let itemsVisibles = [...allItems];
+
+        const container = document.getElementById('catalogo');
+        const itemCount = document.getElementById('itemCount');
+        const filtrosFamilia = document.getElementById('filtrosFamilia');
+        const filtrosTipo = document.getElementById('filtrosTipo');
+        const filtrosCharolas = document.getElementById('filtrosCharolas');
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+
+        const activeFilters = {
+            family: new Set(),
+            tipo: new Set(),
+            charolas: new Set()
+        };
+
+        function renderItems() {
+            const visibles = itemsVisibles.filter(item => {
+                const familia = (item.family || []).map(f => f.toUpperCase());
+
+                let tipo = "Metalico";
+                let charolas = "2";
+
+                if (item.code.includes("BACKWALL")) {
+                    tipo = "Backwall";
+                    const match = item.code.match(/BACKWALL[_ ]?(\d)/);
+                    if (match) charolas = match[1];
+                } else if (item.code.includes("METALICO")) {
+                    tipo = "Metalico";
+                    const matchMetalico = item.code.match(/METALICO[_ ]?(\d)/);
+                    const matchCharolas = item.code.match(/CHAROLAS[_ ]?(\d)/);
+                    if (matchMetalico) charolas = matchMetalico[1];
+                    else if (matchCharolas) charolas = matchCharolas[1];
+                }
+
+                const familiaMatch = !activeFilters.family.size || [...activeFilters.family].some(f => familia.includes(f));
+                const tipoMatch = !activeFilters.tipo.size || activeFilters.tipo.has(tipo);
+                const charolasMatch = !activeFilters.charolas.size || activeFilters.charolas.has(charolas);
+                return familiaMatch && tipoMatch && charolasMatch;
+            });
+
+            container.innerHTML = '';
+            visibles.forEach(item => {
+                const carpeta = item.code.toLowerCase().includes('cck') ? 'imagenes_cck' :
+                    item.code.toLowerCase().includes('711') || item.title.toLowerCase().includes('seven') ? 'imagenes_seven' :
+                    item.code.toLowerCase().includes('gomart') ? 'imagenes_gomart' :
+                    (item.categoria === 'backwall' ? 'img' : 'imagenes_charolas_extraidas');
+
+                const ruta = `${carpeta}/${encodeURIComponent(item.img)}`;
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.innerHTML = `
+                    <img src="${ruta}" alt="${item.title}" onclick="mostrarModal('${ruta}')">
+                    <div class="info">
+                        <h5>${item.title}</h5>
+                        <p>${item.code}</p>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+            itemCount.textContent = visibles.length;
+        }
+
+        function limpiarFiltros() {
+            Object.values(activeFilters).forEach(set => set.clear());
+            document.querySelectorAll('.btn-toggle').forEach(btn => btn.classList.remove('active'));
+            renderItems();
+        }
+
+        function mostrarModal(src) {
+            modalImg.src = src;
+            modal.style.display = 'flex';
+        }
+
+        function cerrarModal() {
+            modal.style.display = 'none';
+        }
+
+        function volverMenu() {
+            document.getElementById('catalogoView').style.display = 'none';
+            document.getElementById('startView').style.display = 'block';
+        }
+
+        function crearBotonFiltro(valor, filtroKey, contenedor) {
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-outline-primary btn-toggle';
+            btn.textContent = valor;
+            btn.onclick = () => {
+                if (activeFilters[filtroKey].has(valor)) {
+                    activeFilters[filtroKey].delete(valor);
+                    btn.classList.remove('active');
+                } else {
+                    activeFilters[filtroKey].add(valor);
+                    btn.classList.add('active');
+                }
+                renderItems();
+            };
+            contenedor.appendChild(btn);
+        }
+
+        const filtrosPorCadena = {
+            oxxo: {
+                family: ["FAROS", "HTU", "ZYN"],
+                tipo: ["Backwall", "Metalico"],
+                charolas: ["4", "5"]
+            },
+            cck: {
+                family: ["FAROS", "HTU", "ZYN", "RESELLER"],
+                tipo: ["Backwall"],
+                charolas: ["2", "3", "4", "5", "6", "7"]
+            },
+            711: {
+                family: ["ZYN", "FAROS", "HTU", "RESELLER"],
+                tipo: ["Backwall"],
+                charolas: ["2", "3", "4", "5", "6"]
+            },
+            gomart: {
+                family: ["FAROS", "HTU", "ZYN", "RESELLER"],
+                tipo: ["Backwall", "Metalico"],
+                charolas: ["2", "3", "4", "5", "6"]
+            }
+        };
+
+        function generarFiltrosDinamicos(config) {
+            filtrosFamilia.innerHTML = '';
+            filtrosTipo.innerHTML = '';
+            filtrosCharolas.innerHTML = '';
+            config.family.forEach(valor => crearBotonFiltro(valor, 'family', filtrosFamilia));
+            config.tipo.forEach(valor => crearBotonFiltro(valor, 'tipo', filtrosTipo));
+            config.charolas.forEach(valor => crearBotonFiltro(valor, 'charolas', filtrosCharolas));
+        }
+
+        function filtrarPorCadena(nombreCadena) {
+            document.getElementById('startView').style.display = 'none';
+            document.getElementById('catalogoView').style.display = 'block';
+
+            itemsVisibles = allItems.filter(item =>
+                item.code.toLowerCase().includes(nombreCadena.toLowerCase()) ||
+                item.title.toLowerCase().includes(nombreCadena.toLowerCase())
+            );
+
+            limpiarFiltros();
+            generarFiltrosDinamicos(filtrosPorCadena[nombreCadena.toLowerCase()]);
+        }
+    </script>
+</body>
+
+</html>
